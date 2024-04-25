@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="https://fav.farm/🛰️" />
+    <title>Custom element • Remote DOM</title>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="module">
+      import {DOMRemoteReceiver} from '@remote-dom/core/receivers';
+      import {retain, release, createThreadFromWebWorker} from '@quilted/threads';
+
+      const root = document.querySelector('#root');
+
+      const receiver = new DOMRemoteReceiver({
+        retain,
+        release,
+      });
+      receiver.connect(root);
+
+      const w = new Worker("./worker.js", {type: "module"});
+      const thread = createThreadFromWebWorker(w);
+      thread.render(receiver.connection);
+    </script>
+  </body>
+</html>
